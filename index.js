@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import WrapHeader from './src/component/Header';
+import HOC from './src/component/HOC/BaseExtender';
 
 ReactDOM.render(
-  <h1>Hello, world!</h1>,
+  <HOC />
+,
   document.getElementById('root')
 );

@@ -9,14 +9,17 @@ module.exports = {
         rules: [
             {
                 test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
                 use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['es2015', 'react'],
-                    }
-                },
-                exclude: /node_modules/
-            }
+                    loader: "babel-loader"
+                }
+            },{
+                 test: /\.css$/, 
+                 use: ['style-loader', 'css-loader'] 
+            },{ 
+                test: /\.(png|jpg|jpeg|gif)$/, 
+                use: 'url-loader' 
+            },
         ]
     }
 }
