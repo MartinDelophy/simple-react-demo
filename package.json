@@ -2,7 +2,7 @@
   "name": "react-demo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server"
@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/preset-react": "^7.0.0",
+    "@types/react-dom": "^16.8.3",
     "antd": "^3.13.6",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.5",
@@ -18,15 +20,23 @@
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
     "react-redux": "^6.0.1",
-    "redux": "^4.0.1"
+    "redux": "^4.0.1",
+    "webpack-dev-server": "^3.2.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^7.1.5",
     "babel-plugin-import": "^1.11.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "css-loader": "^2.1.0",
     "redux-devtools": "^3.5.0",
+    "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.4.1",
     "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3"
   }

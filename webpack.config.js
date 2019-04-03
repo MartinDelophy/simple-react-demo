@@ -1,25 +1,30 @@
-const path = require('path');
 module.exports = {
-    entry: path.resolve(__dirname, './index.js'), //指定入口文件，程序从这里开始编译,__dirname当前所在目录, ../表示上一级目录, ./同级目录
-    output: {
-        path: path.resolve(__dirname, '../dist'), // 输出的路径
-        filename: 'bundle.js'  // 打包后文件
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader"
-                }
-            },{
-                 test: /\.css$/, 
-                 use: ['style-loader', 'css-loader'] 
-            },{ 
-                test: /\.(png|jpg|jpeg|gif)$/, 
-                use: 'url-loader' 
-            },
-        ]
-    }
-}
+  entry: "./src/index.tsx",
+  output: {
+    filename: "bundle.js",
+    path: __dirname + "/dist"
+  },
+
+  // Enable sourcemaps for debugging webpack's output.
+  devtool: "source-map",
+
+  resolve: {
+    // Add '.ts' and '.tsx' as resolvable extensions.
+    extensions: [".ts", ".tsx", ".js", ".json"]
+  },
+
+  module: {
+    rules: [
+      // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
+      { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+
+      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
+    ]
+  }
+
+  // When importing a module whose path matches one of the following, just
+  // assume a corresponding global variable exists and use that instead.
+  // This is important because it allows us to avoid bundling all of our
+  // dependencies, which allows browsers to cache those libraries between builds.
+};
