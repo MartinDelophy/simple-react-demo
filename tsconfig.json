@@ -7,5 +7,7 @@
     "target": "es6",
     "jsx": "react"
   },
+  "extends": ["tslint:recommended", "tslint-react"],
+  "rules": {},
   "include": ["./src/**/*"]
 }
