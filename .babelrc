@@ -1,9 +1,28 @@
 {
   //babel-preset-env 提供了更精细化的配置，以提升编译速度，同时减少代码冗余。
   //transform-function-bind 这个插件其实就是提供过 :: 这个操作符来方便快速切换上下文this。
-  "presets": ["@babel/preset-env", "@babel/typescript", "@babel/react"],
+  //我去 这个 plugin-proposal-decorators 和 plugin-proposal-class-properties 插件竟然还有顺序要求
+  "presets": ["@babel/preset-env", "@babel/react", "@babel/preset-typescript"],
   "plugins": [
-    "@babel/plugin-transform-runtime",
-    "@babel/plugin-proposal-function-bind"
+    "@babel/plugin-proposal-function-bind",
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ],
+    [
+      "@babel/plugin-proposal-class-properties",
+      {
+        "loose": true
+      }
+    ],
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "style": true
+      }
+    ]
   ]
 }

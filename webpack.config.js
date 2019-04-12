@@ -1,8 +1,21 @@
+const path = require("path");
+var HtmlWebpackPlugin = require("html-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const webpack = require("webpack");
+
+const extractLess = new ExtractTextPlugin({
+  filename: "[name].[contenthash].css",
+  disable: process.env.NODE_ENV === "development"
+});
+
+// process.env.NODE_ENV === 'development'; // 或简写 dev，意为开发环境
+// process.env.NODE_ENV === 'production'; // 或简写 prod，意为生产环境
+// 有意思！！[id] chunk id; [hash]唯一hash生成;
 module.exports = {
   entry: "./src/index.tsx",
   output: {
-    filename: "bundle.js",
-    path: __dirname + "/dist"
+    filename: "[id].[hash].bundle.js",
+    path: path.resolve(__dirname, "dist")
   },
 
   // Enable sourcemaps for debugging webpack's output.
@@ -21,7 +34,18 @@ cheap-module-source-map	生成一个没有列信息（column-mappings）的Sourc
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
+    alias: {
+      "@": path.resolve(__dirname, "src")
+    },
     extensions: [".ts", ".tsx", ".js", ".json"]
+  },
+  devServer: {
+    contentBase: path.join(__dirname, "dist"),
+    compress: true,
+    port: 8080,
+    historyApiFallback: true,
+    host: "0.0.0.0",
+    hot: true
   },
 
   module: {
@@ -30,7 +54,10 @@ cheap-module-source-map	生成一个没有列信息（column-mappings）的Sourc
       //比起tsloader编译速度更快
       {
         test: /\.tsx?$/,
-        loader: "babel-loader"
+        loader: "babel-loader",
+        options: {
+          plugins: [["import", { libraryName: "antd", style: true }]]
+        }
       },
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
@@ -40,28 +67,137 @@ cheap-module-source-map	生成一个没有列信息（column-mappings）的Sourc
       //postcss 预编译，解析
       { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
       {
+        test: /\.(css|less)$/,
+        use: ExtractTextPlugin.extract({
+          use: [
+            {
+              loader: "style-loader" // creates style nodes from JS strings
+            },
+            {
+              loader: "css-loader",
+              options: {
+                sourceMap: true,
+                importLoaders: 1
+              } // translates CSS into CommonJS
+            },
+            {
+              loader: "less-loader", // compiles Less to CSS
+              options: {
+                //用于定制antdesign主题
+                modifyVars: {
+                  "primary-color": "#1DA57A",
+                  "link-color": "#1DA57A",
+                  "border-radius-base": "2px"
+                },
+                javascriptEnabled: true,
+                sourceMap: true
+              }
+            }
+          ]
+        })
+      },
+      {
         test: /\.css$/,
-        exclude: /node_modules/,
+        include: /node_modules/,
         use: [
+          require.resolve("style-loader"),
           {
-            loader: "style-loader"
-          },
-          {
-            loader: "css-loader",
+            loader: require.resolve("css-loader"),
             options: {
               importLoaders: 1
             }
           },
           {
-            loader: "postcss-loader"
+            loader: require.resolve("postcss-loader"),
+            options: {
+              // Necessary for external CSS imports to work
+              // https://github.com/facebookincubator/create-react-app/issues/2677
+              ident: "postcss",
+              plugins: () => [
+                require("postcss-flexbugs-fixes"),
+                autoprefixer({
+                  browsers: [
+                    ">1%",
+                    "last 4 versions",
+                    "Firefox ESR",
+                    "not ie < 9" // React doesn't support IE8 anyway
+                  ],
+                  flexbox: "no-2009"
+                })
+              ]
+            }
+          }
+        ]
+      },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        use: [
+          require.resolve("style-loader"),
+          {
+            loader: require.resolve("typings-for-css-modules-loader"),
+            options: {
+              modules: true,
+              namedExport: true,
+              camelCase: true
+            }
           },
           {
-            loader: "less-loader"
+            loader: require.resolve("postcss-loader"),
+            options: {
+              // Necessary for external CSS imports to work
+              // https://github.com/facebookincubator/create-react-app/issues/2677
+              ident: "postcss",
+              plugins: () => [
+                require("postcss-flexbugs-fixes"),
+                autoprefixer({
+                  browsers: [
+                    ">1%",
+                    "last 4 versions",
+                    "Firefox ESR",
+                    "not ie < 9" // React doesn't support IE8 anyway
+                  ],
+                  flexbox: "no-2009"
+                })
+              ]
+            }
           }
+          // {
+          //   test: /\.(png|svg|jpe?g|gif)$/i,
+          //   use: [
+          //     {
+          //       loader: "file-loader",
+          //       options: {
+          //         limit: 500,
+          //         outputPath: "public/images/",
+          //         name: "[name].[hash:8].[ext]"
+          //       }
+          //     }
+          //   ]
+          // },
+          // {
+          //   test: /\.jpeg$/,
+          //   use: [
+          //     {
+          //       loader: "url-loader",
+          //       options: {
+          //         limit: "1024"
+          //       }
+          //     }
+          //   ]
+          // }
         ]
       }
     ]
-  }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: "./index.html"
+    }),
+    extractLess,
+    new webpack.HotModuleReplacementPlugin()
+  ]
 
   // When importing a module whose path matches one of the following, just
   // assume a corresponding global variable exists and use that instead.

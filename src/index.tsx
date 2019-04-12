@@ -1,17 +1,20 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import React from "react";
+import ReactDOM from "react-dom";
+import Todo from "@/components/todo";
+import Result from "@/components/result";
+import { Router, Route, Switch } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import { Provider, Observer } from "mobx-react";
+import ListStore from "./components/store/index";
 
-
-var f = React.createFactory("div");
-
-var a = {t:function(){return 1}}
-
-const {t} = a;
-
-
-ReactDOM.render(<div>132</div>, document.getElementById("root"));
-function newFunction(): any {
-    return React.isValidElement(f);
-}
-console.log(a::t())
-
+ReactDOM.render(
+  <Router history={createBrowserHistory()}>
+    <Provider store={ListStore}>
+      <Switch>
+        <Route path="/todo" exact component={Todo} />
+        <Route path="/result" component={Result} />
+      </Switch>
+    </Provider>
+  </Router>,
+  document.getElementById("root")
+);
